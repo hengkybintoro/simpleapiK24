@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            overflow: hidden;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #77aaff 3px solid;
+        }
+        header a {
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+        header ul {
+            padding: 0;
+            list-style: none;
+            margin: 0;
+        }
+        header li {
+            float: left;
+            display: inline;
+            padding: 0 20px 0 20px;
+        }
+        header #branding {
+            float: left;
+        }
+        header #branding h1 {
+            margin: 0;
+        }
+        header nav {
+            float: right;
+            margin-top: 10px;
+        }
+        .edit-container {
+            background: #fff;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .edit-container h2 {
+            border-bottom: 2px solid #77aaff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .form-group img {
+            max-width: 100px;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-actions {
+            margin-top: 20px;
+        }
+        .form-actions button {
+            background: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .form-actions button.cancel {
+            background: #777;
+        }
+    </style>
+    <script>
+        function confirmUpdate(event) {
+            event.preventDefault();
+            if (confirm("Are you sure you want to save the changes?")) {
+                document.getElementById("editForm").submit();
+            }
+        }
+
+        function exportTo(format) {
+            const memberId = document.getElementById('memberId').value;
+            const url = `/member/export/${format}?id=${memberId}`;
+            window.location.href = url;
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1>Edit Profile</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li th:if="${not isAdmin}"><a href="/member">View Profile</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <div class="edit-container">
+            <h2>Update Your Profile</h2>
+            <form id="editForm" th:action="@{/member/edit(id=${member.id})}" th:object="${member}" method="post" enctype="multipart/form-data">
+                <input type="hidden" id="memberId" th:value="${member.id}" />
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" th:field="*{name}" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" th:field="*{email}" required readonly>
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender:</label>
+                    <select id="gender" th:field="*{gender}" required>
+                        <option value="Male" th:selected="${member.gender == 'Male'}">Male</option>
+                        <option value="Female" th:selected="${member.gender == 'Female'}">Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ktpNumber">KTP Number:</label>
+                    <input type="text" id="ktpNumber" th:field="*{ktpNumber}" required>
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number:</label>
+                    <input type="text" id="phoneNumber" th:field="*{phoneNumber}" required>
+                </div>
+                <div class="form-group">
+                    <label for="birthDate">Birth Date:</label>
+                    <input type="date" id="birthDate" th:field="*{birthDate}" th:value="${formattedBirthDate}" required>
+                </div>
+                <div class="form-group">
+                    <label for="photo">Photo:</label>
+                    <input type="file" id="photo" th:field="*{photo}">
+                    <img th:src="@{${member.photo}}" alt="Current Photo">
+                </div>
+                <div class="form-group" th:if="${isAdmin}">
+                    <label for="role">Role:</label>
+                    <select id="role" th:field="*{role}" required>
+                        <option value="MEMBER" th:selected="${member.role == 'MEMBER'}">Member</option>
+                        <option value="ADMIN" th:selected="${member.role == 'ADMIN'}">Admin</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" onclick="confirmUpdate(event)">Update</button>
+                    <button type="button" class="cancel" th:if="${isAdmin}" onclick="window.location.href='/admin';">Cancel</button>
+                    <button type="button" class="cancel" th:if="${not isAdmin}" onclick="window.location.href='/member';">Cancel</button>
+                    <!-- Export Buttons -->
+                    <button type="button" th:if="${isAdmin}" onclick="exportTo('excel')">Export to Excel</button>
+                    <button type="button" th:if="${isAdmin}" onclick="exportTo('pdf')">Export to PDF</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

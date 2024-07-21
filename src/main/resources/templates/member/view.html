@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            overflow: hidden;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #77aaff 3px solid;
+        }
+        header a {
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+        header ul {
+            padding: 0;
+            list-style: none;
+            margin: 0;
+        }
+        header li {
+            float: left;
+            display: inline;
+            padding: 0 20px 0 20px;
+        }
+        header #branding {
+            float: left;
+        }
+        header #branding h1 {
+            margin: 0;
+        }
+        header nav {
+            float: right;
+            margin-top: 10px;
+        }
+        .profile-container {
+            background: #fff;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .profile-container h2 {
+            border-bottom: 2px solid #77aaff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .profile-item {
+            margin-bottom: 15px;
+        }
+        .profile-item label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .profile-item span {
+            display: block;
+            padding: 8px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+        }
+        .profile-item img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .button-group {
+            margin-top: 20px;
+        }
+        .button-group a {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-right: 10px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #77aaff;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .button-group a.cancel {
+            background-color: #999;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div id="branding">
+                <h1>Member Profile</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/logout">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <div class="profile-container">
+            <h2>Profile Details</h2>
+            <div class="profile-item">
+                <label>Name:</label>
+                <span th:text="${member.name}"></span>
+            </div>
+            <div class="profile-item">
+                <label>Email:</label>
+                <span th:text="${member.email}"></span>
+            </div>
+            <div class="profile-item">
+                <label>Gender:</label>
+                <span th:text="${member.gender}"></span>
+            </div>
+            <div class="profile-item">
+                <label>KTP Number:</label>
+                <span th:text="${member.ktpNumber}"></span>
+            </div>
+            <div class="profile-item">
+                <label>Phone Number:</label>
+                <span th:text="${member.phoneNumber}"></span>
+            </div>
+            <div class="profile-item">
+                <label>Birth Date:</label>
+                <span th:text="${formattedBirthDate}"></span>
+            </div>
+            <div class="profile-item">
+                <label>Photo:</label>
+                <img th:src="@{${member.photo}}" alt="Profile Photo">
+            </div>
+            <div class="profile-item" th:if="${member.role}">
+                <label>Role:</label>
+                <span th:text="${member.role}"></span>
+            </div>
+            <div class="button-group">
+                <a th:href="@{/member/edit(id=${member.id})}">Edit</a>
+                <a href="/member" class="cancel">Cancel</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

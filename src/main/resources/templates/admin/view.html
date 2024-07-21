@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Home Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .member-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .member-table th, .member-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .member-table th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        .member-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .member-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .view-link, .delete-link {
+            color: #1a73e8;
+            text-decoration: none;
+            padding: 5px;
+            display: inline-block;
+        }
+
+        .view-link:hover, .delete-link:hover {
+            text-decoration: underline;
+        }
+
+        .register-button, .delete-button {
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .register-button {
+            background-color: #4CAF50;
+        }
+
+        .register-button:hover {
+            background-color: #45a049;
+        }
+
+        .delete-button {
+            background-color: #f44336;
+        }
+
+        .delete-button:hover {
+            background-color: #e53935;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Home Page</h1>
+        <a href="/member/register" class="register-button">Register New Member</a>
+        <table class="member-table">
+            <thead>
+                <tr>
+                    <th>Member ID</th>
+                    <th>Member Name</th>
+                    <th>Member Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="member : ${members}">
+                    <td th:text="${member.id}">1</td>
+                    <td th:text="${member.name}">John Doe</td>
+                    <td th:text="${member.email}">john.doe@example.com</td>
+                    <td>
+                        <a th:href="@{/member/edit(id=${member.id})}" class="view-link">Edit</a>
+                        <a href="#" class="delete-link" th:attr="data-id=${member.id}" onclick="confirmDelete(this)">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function confirmDelete(link) {
+            var memberId = link.getAttribute('data-id');
+            console.log("memberId : " + memberId);
+            if (confirm("Are you sure you want to delete this member?")) {
+                var deleteUrl = '/member/delete?id=' + encodeURIComponent(memberId);
+                window.location.href = deleteUrl;
+            }
+        }
+    </script>
+</body>
+</html>
